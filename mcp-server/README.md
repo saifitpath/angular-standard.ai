@@ -17,34 +17,77 @@ Central [Model Context Protocol](https://modelcontextprotocol.io/) server for co
 - **Node.js** 18 or later
 - **npm** 9+
 
-## Local Development
+## Verification
 
-```bash
-# From the mcp-server directory
-cd mcp-server
+Run these commands from the `mcp-server/` directory to confirm the build produces a runnable entry point:
 
-# Install dependencies
+```powershell
 npm install
-
-# Build TypeScript
 npm run build
-
-# Run the server (stdio transport)
-npm start
-
-# Development mode (no build step)
-npm run dev
-```
-
-### Verify the build
-
-After `npm run build`, confirm `dist/index.js` exists:
-
-```bash
 node dist/index.js
 ```
 
-The server waits silently on stdin. Press `Ctrl+C` to stop. Startup logs appear on **stderr** only.
+**Expected build output** (`npm run build`):
+
+```
+Cleaned .../mcp-server/dist
+BUILD VERIFICATION PASSED
+Entry point : dist/index.js
+...
+```
+
+**Expected runtime output** (`node dist/index.js`):
+
+```
+[angular-standard-ai] v1.0.0 starting on stdio transport...
+[angular-standard-ai] Rules directory: .../angular-standard.ai/rules
+[angular-standard-ai] Ready — waiting for client connections.
+```
+
+Logs appear on **stderr** only. The process waits on stdin — press `Ctrl+C` to stop.
+
+**Confirm emitted files** (PowerShell):
+
+```powershell
+Get-ChildItem -Path dist -Recurse
+```
+
+You should see at minimum:
+
+```
+dist/index.js
+dist/services/rules.service.js
+dist/services/structure.service.js
+dist/services/validation.service.js
+dist/services/requirement.service.js
+```
+
+Re-run verification without rebuilding:
+
+```powershell
+npm run verify
+```
+
+## Local Development
+
+```bash
+cd mcp-server
+npm install
+npm run build
+npm start      # runs node dist/index.js
+npm run dev    # tsx src/index.ts (no build)
+```
+
+## Build Output
+
+| Setting | Value |
+|---------|-------|
+| TypeScript `rootDir` | `./src` |
+| TypeScript `outDir` | `./dist` |
+| Entry point | `dist/index.js` |
+| Module system | ESM (`"type": "module"`) |
+
+The build script runs `clean → tsc → verify`. If `dist/index.js` is missing after build, the verify step exits with code 1.
 
 ## Installation
 
