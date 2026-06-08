@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "angular-standard-ai": {
+      "command": "node",
+      "args": [
+        "../angular-standard.ai/mcp-server/dist/index.js"
+      ]
+    }
+  }
+}
